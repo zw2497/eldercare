@@ -9,10 +9,12 @@ def refactor(l):
 def get_mode(x):
     if x < 4000:
         return 0
+    elif x < 6000:
+        return 1
     elif x < 8000:
-        return 100
+        return 2
     else:
-        return 300
+        return 3
     
 
 bus = SMBus(1)
@@ -31,9 +33,9 @@ while 1:
     registers = [ 0x12, 0x20, 0x06, 0x01, 0x00]
     bus.write_i2c_block_data(address, 0,registers)
     l = bus.read_i2c_block_data(address, 0, 32)
-    x = refactor(l[26]) **2 + refactor(l[28]) **2 + refactor(l[28]) **2
+    x = refactor(l[26]) **2 + refactor(l[28]) **2  + refactor(l[30]) **2
     data['jump']=str(get_mode(x))
-    print(data)
+    print(data,x)
     r = requests.post(
         url='https://mwmrdhsvyb.execute-api.us-east-2.amazonaws.com/default/4764activity',
         json=data)
