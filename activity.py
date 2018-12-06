@@ -7,29 +7,25 @@ def refactor(l):
         return l - 255
     return l
 def get_mode(x):
-    if x < 4000:
+    if x < 1700:
         return 0
-    elif x < 6000:
+    elif x < 2300:
         return 1
-    elif x < 8000:
-        return 2
+    elif x < 3000:
+        return 3
     else:
         return 3
     
 
 bus = SMBus(1)
 address = 0x4c
-
+bus.write_i2c_block_data(address, 0,[0x18, 0x20, 0x00, 0x01, 0x10])
 while 1:
-    time.sleep(0.1)
     bus.write_i2c_block_data(address, 0,[0x15, 0x30, 0x00, 0x0C,])
     l = bus.read_i2c_block_data(address,0, 16)
     status = l[4] & 7
-    
     data={}
     data['activity']=str(status)
-    
-
     registers = [ 0x12, 0x20, 0x06, 0x01, 0x00]
     bus.write_i2c_block_data(address, 0,registers)
     l = bus.read_i2c_block_data(address, 0, 32)
